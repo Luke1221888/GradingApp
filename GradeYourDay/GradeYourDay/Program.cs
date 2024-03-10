@@ -1,10 +1,28 @@
-﻿namespace GradeYourDay
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
-    }
-}
+﻿using GradeYourDay;
+using static System.Console;
+
+Day day = new Day("dzisiejszy");
+
+day.Run();
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
