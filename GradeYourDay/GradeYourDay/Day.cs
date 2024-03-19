@@ -8,8 +8,9 @@ namespace GradeYourDay
 
         private string DayName;
 
-        private static List<float> ratings = new List<float>();
+        public static List<float> ratings = new List<float>();
         private string[] questions = {
+
 
             "W jakim stopniu udało Ci się dzisiaj spożytkować czas?",
             "Jak się dzisiaj czułeś/aś?",
@@ -20,7 +21,7 @@ namespace GradeYourDay
             "Na ile udało Ci się zaoszczędzić dzisiaj pieniądze?",
             "Na ile miałeś/aś odpowiednią dawkę ruchu? (np. spacer, ćwiczenia itp.)",
             "Na ile uważasz zostawiłeś w miejscu domu, pracy porządek?",
-            "Generalnie, jak oceniasz swój dzisiejszy dzień?"
+            "Na ile ten dzień był inny od pozostałych?"
 
         };
 
@@ -33,29 +34,63 @@ namespace GradeYourDay
         {
             Title = "GradeYourDay";
 
-            WriteLine("Program ten to prosta aplikacja do pomocy przy ocenie dnia");
-            WriteLine("**********************************************************");
+            WriteLine("Prosta aplikacja do pomocy oceny dnia");
+            WriteLine("*******************************************");
 
-            bool saidYes = Day.PromptYesNo($"Czy chcesz ocenić swój dzień? Wpisz 'tak' by wyświetlić pytania lub 'nie' by zakończyć.");
-            
-            if (saidYes == true)
+
+            WriteLine("\nPodawaj liczby od 0-10 by odpowiedzieć na pytania.");
+            WriteLine("Lub wpisz 'exit' aby zakończyć program\n");
+            WriteLine("0 oznacza najgorszy wynik");
+            WriteLine("10 oznacza najlepszy wynik");
+            WriteLine("*****************************************");
+
+
+
+            for (int i = 0; i < questions.Length; i++)
             {
-                WriteLine("\nPodawaj odpowiedzi na pytania w postaci liczb w zakresie od 1-10\n");
-                WriteLine("--------------------------------------------------------------------");
-                AskQuestions();
+                WriteLine(questions[i]);
 
-                var statistics = GetStatistics();
+                float rating;
+                string userInput;
+                do
+                {
+                    userInput = ReadLine();
+                    if (userInput.ToLower().Trim() == "exit") // Sprawdź, czy użytkownik chce wyjść
+                    {
+                        return; 
 
-                WriteLine($"Srednia z wprowadzonych danych: {statistics.Average:N2}"); 
-                WriteLine($"Minimalna wprowadzona wartosc:{statistics.Min}"); 
-                WriteLine($"Maksymalna wprowadzona wartosc: {statistics.Max}");
+                    }
+                    else
+                    {
+                        Write("\nWpisz liczbę od 0-10 lub 'exit' aby wyjść\n");
+                    }
+
+                } while (!CheckAnswer(userInput, out rating));
+
+                AddRating(rating);
             }
-            else
+
+            Clear();
+            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            var statistics = GetStatistics();
+            WriteLine($"WYNIK: {statistics.Average:N2}");
+            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            WriteLine("");
+
+            float minRating = ratings.Min();
+
+            WriteLine("Najniższe oceny:");
+            Console.WriteLine("Popracuj nad poniższymi tematami");
+            for (int i = 0; i < questions.Length; i++)
             {
-                WriteLine("Może innym razem");
+                if (ratings[i] == minRating)
+                {
+                    WriteLine($"- {questions[i]}: ocena {ratings[i]}");
+                }
+
             }
 
-            WriteLine("Dziękuję za ocenę Twojego dnia.");
+                WriteLine("Dziękuję za ocenę Twojego dnia.");
 
             WriteLine();
             ReadKey();
@@ -71,70 +106,17 @@ namespace GradeYourDay
             {
                 WriteLine("Wpisano liczbe poza zakresem liczb!");
             }
-
         }
 
-        public void AddRating(string rating)
+
+        public static bool CheckAnswer(string answer, out float result)
         {
-            if (float.TryParse(rating, out float result))
+            if (float.TryParse(answer, out result))
             {
-                AddRating(result);
-            }
-            else
-            {
-                WriteLine("Podana nazwa to nie liczba!");
-            }
-        }
-
-        public void AskQuestions()
-        {
-
-            for (int i = 0; i < questions.Length; i = i + 1)
-            {
-
-                WriteLine(questions[i]);
-
-                float rating;
-
-                while (!CheckAnswer(ReadLine(), out rating))
-                {
-
-                    WriteLine("Błędna odpowiedź. Spróbuj jeszcze raz.");
-
-                }
-
-
-                AddRating(rating);
-                WriteLine("-----------------------------------------------------------------");
-            }
-        }
-
-        public static bool CheckAnswer(string rating, out float result)
-        {
-            if (float.TryParse(rating, out result))
-            {
+                if (result >= 0 && result <= 10)
                     return true;
             }
             return false;
-
-        }
-
-        public static bool PromptYesNo(string question)
-        {
-            WriteLine(question);
-            string response = Console.ReadLine().ToLower().Trim();
-            if (response == "tak")
-            {
-                return true;
-            }
-            else if (response == "nie")
-            {
-                return false;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         public static Statistics GetStatistics()
@@ -151,7 +133,32 @@ namespace GradeYourDay
                 statistics.Average += rating;
             }
             statistics.Average = statistics.Average /= ratings.Count;
+
+
+            switch (statistics.Average)
+            {
+                case var average when average == 10:
+                    WriteLine("Twój dzień był wzorowy ! Gratulacje !");
+                    break;
+                case var average when average >= 8:
+                    WriteLine("Twój dzień był bardzo dobry");
+                    break;
+                case var average when average >= 6:
+                    WriteLine("Twój dzień był dobry");
+                    break;
+                case var average when average >= 3.50:
+                    WriteLine("Twój dzień był średni");
+                    break;
+                case var average when average >= 1:
+                    WriteLine("Twój dzień był słaby");
+                    break;
+                default:
+                    WriteLine("Twój dzień był fatalny. Zawalcz o następny dzień.");
+                    break;
+            }
+
             return statistics;
+
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using GradeYourDay;
 using static System.Console;
 
-Day day = new Day("dzisiejszy");
+Day day1 = new Day("poniedziałek");
+Day day2 = new Day("wtorek");
 
-day.Run();
+
+day1.Run();
 
 
 
