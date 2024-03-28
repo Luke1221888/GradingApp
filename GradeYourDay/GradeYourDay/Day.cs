@@ -14,7 +14,7 @@ namespace GradeYourDay
 
             "W jakim stopniu udało Ci się dzisiaj spożytkować czas?",
             "Jak się dzisiaj czułeś/aś?",
-            "W jakim stopniu miałeś/aś dzisiaj kontakty społeczne?",
+            "Na ile miałaś dzisiaj kontakty z innymi ludźmi?",
             "Na ile udało się wykonać dzisiaj zadań?",
             "Na ile myślałaś/eś dzisiaj pozytywnie?",
             "Na ile dbałaś dzisiaj o rozrywkę?",
@@ -78,16 +78,20 @@ namespace GradeYourDay
             WriteLine("");
 
             float minRating = ratings.Min();
-
-            WriteLine("Najniższe oceny:");
-            Console.WriteLine("Popracuj nad poniższymi tematami");
+            WriteLine($"Ilość ocen: {statistics.Count}");
+            
+            WriteLine("Popracuj nad poniższymi tematami o najniższych ocenach:");
             for (int i = 0; i < questions.Length; i++)
             {
                 if (ratings[i] == minRating)
                 {
                     WriteLine($"- {questions[i]}: ocena {ratings[i]}");
                 }
-
+               
+                if (ratings[i] == minRating + 1)
+                {
+                    WriteLine($"- {questions[i]}: ocena {ratings[i]}");
+                }
             }
 
                 WriteLine("Dziękuję za ocenę Twojego dnia.");
@@ -133,7 +137,7 @@ namespace GradeYourDay
                 statistics.Average += rating;
             }
             statistics.Average = statistics.Average /= ratings.Count;
-
+            statistics.Count = ratings.Count;
 
             switch (statistics.Average)
             {
