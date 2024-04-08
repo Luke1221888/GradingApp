@@ -4,23 +4,17 @@ namespace GradeYourDay
 {
     public class Person
     {
-        public virtual string Name { get; set; }
-        public virtual string Surname { get; set; }
-        
+        public virtual string FirstName { get; set; }
+        public virtual string LastName { get; set; }
 
-        public Person(string name, string surname)
+        public Person(string firstName, string lastName)
         {
-            Name = name;
-            Surname = surname;
+            FirstName = firstName;
+            LastName = lastName;
         }
 
-        
-
-
-
-
-
-
-
+        public Person()
+        {
+        }
     }
 }

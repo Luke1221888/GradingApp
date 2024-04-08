@@ -6,18 +6,28 @@
         {
         }
 
-        public override string Name {get; set;}
+        public DayBase()
+        { 
+        }
 
-        public override string Surname { get; set; }
+        public override string FirstName { get; set; }
+
+        public override string LastName { get; set; }
 
         public string DayName { get; set; }
 
+        public event IDay.TextAddedToFile TextAdded;
+
         public abstract void AddRating(float rating);
+
+        public abstract void AddRating(double rating);
+
+        public abstract void AddRating(string answer);
 
         public abstract bool CheckAnswer(string answer, out float result);
 
         public abstract Statistics GetStatistics();
 
-        public abstract void Run();
+        public abstract void ShowQuestions();
     }
 }

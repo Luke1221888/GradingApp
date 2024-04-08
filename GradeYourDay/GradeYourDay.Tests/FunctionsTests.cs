@@ -7,7 +7,7 @@ namespace GradeYourDay.Tests
         [SetUp]
         public void Setup()
         {
-            day = new DayInMemory("Jan", "Kowalski");
+            day = new DayInMemory("Jan", "Kopernik");
         }
 
         [Test]

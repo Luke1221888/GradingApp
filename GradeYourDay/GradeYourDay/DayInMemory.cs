@@ -7,7 +7,6 @@ namespace GradeYourDay
     public class DayInMemory : DayBase
     {
 
-
         public static List<float> ratings = new List<float>();
         public string[] questions = {
 
@@ -19,7 +18,7 @@ namespace GradeYourDay
             "In what number range did you think positively today?",
             "In what number range did you care about entertainment?",
             "In what number range did you save money?",
-            "In what number range did you care about physical avtivity? (Ex. a walk, exercises)",
+            "In what number range did you care about physical activity? (Ex. a walk, exercises)",
             "In what number range did you care about tidyness in your house, workplace?",
             "In what number range this day was unusual in compare to other days?"
 
@@ -29,17 +28,13 @@ namespace GradeYourDay
         {
         }
 
-
+        public DayInMemory()
+        {
+            
+        }
         public override void AddRating(float rating)
         {
-            if (rating >= 0 && rating <= 10)
-            {
                 ratings.Add(rating);
-            }
-            else
-            {
-                WriteLine("Wpisano liczbe poza zakresem liczb!");
-            }
         }
 
         public override bool CheckAnswer(string answer, out float result)
@@ -56,55 +51,16 @@ namespace GradeYourDay
         {
             var statistics = new Statistics();
 
-
-
-            statistics.Count = ratings.Count;
-            statistics.Min = float.MaxValue;
-            statistics.Max = float.MinValue;
-            statistics.Average = 0;
-
             foreach (var rating in ratings)
             {
-                statistics.Min = Math.Min(statistics.Min, rating);
-                statistics.Max = Math.Max(statistics.Max, rating);
-                statistics.Average += rating;
-            }
-
-            statistics.Average /= ratings.Count;
-
-
-
-            switch (statistics.Average)
-            {
-                case var average when average == 10:
-                    WriteLine("Twój dzień był wzorowy ! Gratulacje !");
-                    break;
-                case var average when average >= 8:
-                    WriteLine("Ocena Twojego dnia wyszła bardzo dobra");
-                    break;
-                case var average when average >= 6:
-                    WriteLine("Ocena Twojego dnia wyszła dobra");
-                    break;
-                case var average when average >= 3.50:
-                    WriteLine("Ocena Twojego dnia wyszła średnia");
-                    break;
-                case var average when average >= 1:
-                    WriteLine("Ocena Twojego dnia wyszła niska");
-                    break;
-                default:
-                    WriteLine("Ocena Twojego dnia wyszła bardzo nisko. Zawalcz o następny dzień.");
-                    break;
+                statistics.AddRating(rating);
             }
 
             return statistics;
         }
 
-        public override void Run()
+        public override void ShowQuestions()
         {
-            Title = "GradeYourDay";
-
-            WriteLine("Simply app for rating a day of patients");
-            WriteLine("*******************************************");
 
             WriteLine("\nType number from 0 to 10 to answer questions.");
             WriteLine("Or type 'exit' to end program\n");
@@ -112,10 +68,11 @@ namespace GradeYourDay
             WriteLine("10 means best result");
             WriteLine("*****************************************");
 
-
             for (int i = 0; i < questions.Length; i++)
             {
+                WriteLine("------------------------------------------------------------------------");
                 WriteLine(questions[i]);
+                WriteLine("------------------------------------------------------------------------");
 
                 float rating;
                 string getNumbers;
@@ -140,13 +97,12 @@ namespace GradeYourDay
             WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             var statistics = GetStatistics();
 
-            WriteLine($"RESULT for day {DayName}: {statistics.Average:N2}");
+            WriteLine($"RESULT for day is {statistics.Average:N2}");
             WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             WriteLine("");
 
             float minRating = ratings.Min();
-            WriteLine($"Amount of grades: {statistics.Count}");
-
+            
             WriteLine("Try work a bit with following topics with lowest ratings:");
             for (int i = 0; i < questions.Length; i++)
             {
@@ -164,8 +120,31 @@ namespace GradeYourDay
                     }
                 }
             }
+            
+        }
 
-            WriteLine("Thank you for rating your day.\n");
+        public override void AddRating(double rating)
+        {
+            if (rating >= 0 && rating <= 10)
+            {
+                AddRating(rating);
+            }
+            else
+            {
+                Console.WriteLine("Rating must be between 0 and 10.");
+            }
+        }
+
+        public override void AddRating(string answer)
+        {
+            if (CheckAnswer(answer, out float rating))
+            {
+                AddRating(rating);
+            }
+            else
+            {
+                Console.WriteLine("Błędna odpowiedź. Spróbuj jeszcze raz.");
+            }
         }
     }
 }
