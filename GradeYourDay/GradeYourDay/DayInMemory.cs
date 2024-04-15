@@ -1,40 +1,37 @@
-﻿using System.Threading.Channels;
-using System.Xml.Linq;
-using static System.Console;
+﻿using static System.Console;
 
 namespace GradeYourDay
 {
     public class DayInMemory : DayBase
     {
+        public string Day { get; set; }
 
         public static List<float> ratings = new List<float>();
-        public string[] questions = {
-
-
-            "In what number range did you make the most of your time??",
+        public List<string> questions = new List<string> {
+            "In what number range did you make the most of your time?",
             "In what number range did you feel today?",
             "In what number range did you have contacts with people today?",
             "In what number range did you manage to complete tasks today?",
             "In what number range did you think positively today?",
             "In what number range did you care about entertainment?",
             "In what number range did you save money?",
-            "In what number range did you care about physical activity? (Ex. a walk, exercises)",
+            "In what number range did you care about physical activity?",
             "In what number range did you care about tidyness in your house, workplace?",
             "In what number range this day was unusual in compare to other days?"
-
         };
 
-        public DayInMemory(string name, string surname) : base(name, surname)
+        public DayInMemory(string day) : base(day)
         {
+            Day = day;
         }
 
         public DayInMemory()
         {
-            
         }
+
         public override void AddRating(float rating)
         {
-                ratings.Add(rating);
+            ratings.Add(rating);
         }
 
         public override bool CheckAnswer(string answer, out float result)
@@ -68,59 +65,70 @@ namespace GradeYourDay
             WriteLine("10 means best result");
             WriteLine("*****************************************");
 
-            for (int i = 0; i < questions.Length; i++)
-            {
-                WriteLine("------------------------------------------------------------------------");
-                WriteLine(questions[i]);
-                WriteLine("------------------------------------------------------------------------");
 
-                float rating;
-                string getNumbers;
-                do
+            var questionIndex = 0;
+
+            while (questionIndex < questions.Count)
+            {
+                try
                 {
-                    getNumbers = ReadLine();
+                    WriteLine("------------------------------------------------------------------------");
+                    WriteLine(questions[questionIndex]);
+                    WriteLine("------------------------------------------------------------------------");
+
+                    string getNumbers = ReadLine();
+
+
                     if (getNumbers.ToLower().Trim() == "exit")
                     {
-                        return;
-
+                        break;
+                    }
+                    if (CheckAnswer(getNumbers, out float rating))
+                    {
+                        AddRating(getNumbers);
+                        questionIndex++;
                     }
                     else
                     {
-                        Write("\nType number from 0-10 or 'exit' to quit program\n");
+                        WriteLine("Answer is wrong. Try again.");
                     }
 
-                } while (!CheckAnswer(getNumbers, out rating));
-                AddRating(rating);
+                }
+                catch (Exception)
+                {
+                    WriteLine("This should not have happen");
+                }
             }
 
             Clear();
-            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            var statistics = GetStatistics();
-
-            WriteLine($"RESULT for day is {statistics.Average:N2}");
-            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            var result = GetStatistics();
+            WriteLine($"Statistics for {Day}:");
+            WriteLine($"Average is {result.Average}");
+            WriteLine($"Grade as letter is: {result.AverageLetter}");
+            WriteLine($"Maximal entered grade is: {result.Max}");
+            WriteLine($"Minimal entered  grade is: {result.Min}");
+            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             WriteLine("");
 
-            float minRating = ratings.Min();
-            
+            var minRating = result.Min;
+
             WriteLine("Try work a bit with following topics with lowest ratings:");
-            for (int i = 0; i < questions.Length; i++)
+            for (int i = 0; i < questions.Count; i++)
             {
-                if (minRating < 6)
+                if (ratings[i] < 5)
                 {
-
-                    if (ratings[i] == minRating)
+                    for (int j = 0; j < 1; j++)
                     {
-                        WriteLine($"- {questions[i]}: rating {ratings[i]}");
-                    }
-
-                    if (ratings[i] == minRating + 1)
-                    {
-                        WriteLine($"- {questions[i]}: rating {ratings[i]}");
+                        if (minRating < 5)
+                        {
+                            WriteLine($"- {questions[i]}: rating {ratings[i]}");
+                        }
                     }
                 }
             }
-            
+
+            WriteLine("\nThank you for rating your day.\n");
         }
 
         public override void AddRating(double rating)
@@ -131,7 +139,7 @@ namespace GradeYourDay
             }
             else
             {
-                Console.WriteLine("Rating must be between 0 and 10.");
+                WriteLine("Rating must be between 0 and 10.");
             }
         }
 
@@ -143,7 +151,7 @@ namespace GradeYourDay
             }
             else
             {
-                Console.WriteLine("Błędna odpowiedź. Spróbuj jeszcze raz.");
+                WriteLine("Rating can't be string.");
             }
         }
     }

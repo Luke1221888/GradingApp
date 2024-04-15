@@ -7,53 +7,46 @@ namespace GradeYourDay
         private static void Main(string[] args)
         {
             Title = "GradeYourDay";
-
             WriteLine("Simply app for rating a day of patients");
-            WriteLine("*******************************************");
-            WriteLine("Type on keyboard '1' to add your day data into file");
-            WriteLine("Type on keyboard '2' to check your day average");
-            WriteLine("Type on keyboard 'Q' to quit program");
-            WriteLine("What will you do?");
+            WriteLine("***********************************************");
 
             while (true)
             {
+                WriteLine("Type on keyboard '1' to add ratings of your day into file and read statistics");
+                WriteLine("Type on keyboard '2' to check your  day statistics in program memory");
+                WriteLine("Type on keyboard 'Q' to quit program");
+                WriteLine("What will you do?");
+
                 string input = ReadLine();
                 if (input == "1")
                 {
-                    string firstName = ReadData("Enter first name:");
-                    string lastName = ReadData("Enter second name:");
-                    string dayName = ReadData("Enter day name:");
-                    if (!string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName) && !string.IsNullOrEmpty(dayName))
+                    string day = ReadData("Enter day:");
+                    if (!string.IsNullOrEmpty(day))
                     {
-                        var dayInFile = new DayInFile(firstName, lastName, dayName);
-
+                        var dayInFile = new DayInFile(day);
                         WriteLine("\nType number from 0 to 10 to answer questions.");
                         WriteLine("Or type 'exit' to end program\n");
                         WriteLine("0 means worst result");
                         WriteLine("10 means best result");
-                        WriteLine("*****************************************");
+                        WriteLine("***********************************************");
 
                         dayInFile.TextAdded += DayTextAdded;
                         dayInFile.ShowQuestions();
-                        dayInFile.SaveToFileAndReadFromFile();
+                        dayInFile.GetStatistics();
                     }
                     else
                     {
-                        WriteLine("Patient's firstname, lastname and dayname can not be empty!");
-
-                       
-                        WriteLine("Type on keyboard '1' to start program");
-                        WriteLine("Type on keyboard 'Q' to quit program");
-                        WriteLine("What will you do?");
+                        WriteLine("Day can not be empty!");
                     }
                 }
                 else if (input == "2")
                 {
-                    var dayInMemory = new DayInMemory();
+                    string day = ReadData("Enter day:");
+                    var dayInMemory = new DayInMemory(day);
                     dayInMemory.ShowQuestions();
                     break;
                 }
-                else if(input == "q".ToLower())
+                else if (input == "q".ToLower().Trim())
                 {
                     break;
                 }
@@ -77,11 +70,3 @@ namespace GradeYourDay
         }
     }
 }
-
-
-
-
-
-
-
-

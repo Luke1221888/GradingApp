@@ -1,22 +1,32 @@
 ﻿namespace GradeYourDay
 {
-    public abstract class DayBase : Person, IDay
+    public abstract class DayBase : IDay
     {
-        protected DayBase(string name, string surname) : base(name, surname)
+
+        public List<string> questions = new List<string> {
+            "In what number range did you make the most of your time??",
+            "In what number range did you feel today?",
+            "In what number range did you have contacts with people today?",
+            "In what number range did you manage to complete tasks today?",
+            "In what number range did you think positively today?",
+            "In what number range did you care about entertainment?",
+            "In what number range did you save money?",
+            "In what number range did you care about physical activity?",
+            "In what number range did you care about tidyness in your house, workplace?",
+            "In what number range this day was unusual in compare to other days?"
+        };
+
+        public event IDay.TextAddedToFile TextAdded;
+
+        public string Day { get; set; }
+
+        protected DayBase(string day)
         {
         }
 
         public DayBase()
-        { 
+        {
         }
-
-        public override string FirstName { get; set; }
-
-        public override string LastName { get; set; }
-
-        public string DayName { get; set; }
-
-        public event IDay.TextAddedToFile TextAdded;
 
         public abstract void AddRating(float rating);
 

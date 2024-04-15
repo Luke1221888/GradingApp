@@ -4,6 +4,7 @@ namespace GradeYourDay
     public class Statistics
     {
         public float Min { get; private set; } 
+
         public float Max { get; private set; } 
 
         public float Sum { get; private set; }
@@ -19,7 +20,6 @@ namespace GradeYourDay
         }
         public char AverageLetter
         {
-
             get
             {
                 switch (Average)
@@ -43,7 +43,7 @@ namespace GradeYourDay
                         WriteLine("Your day rating is very low. Try get better result tomorow.");
                         break;
                 }
-                WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
                 switch (Average)
                 {
@@ -57,13 +57,12 @@ namespace GradeYourDay
                         return 'D';
                     default:
                         return 'E';
-
                 }
             }
         }
         public Statistics()
         {
-            Min = float.MaxValue; 
+            Min = float.MaxValue;
             Max = float.MinValue;
         }
 

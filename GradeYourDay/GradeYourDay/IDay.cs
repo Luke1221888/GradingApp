@@ -8,11 +8,7 @@ namespace GradeYourDay
 {
     public interface IDay
     {
-        string FirstName { get; set; }
-
-        string LastName { get; set; }
-
-        string DayName { get; set; }
+        string Day { get; set; }
 
         void AddRating(float rating);
 

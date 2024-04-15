@@ -2,17 +2,11 @@ namespace GradeYourDay.Tests
 {
     public class Tests
     {
-        private DayInMemory day;
-
-        [SetUp]
-        public void Setup()
-        {
-            day = new DayInMemory("Jan", "Kopernik");
-        }
-
         [Test]
-        public void WhenAddingNumber_ShouldThisNumberBeAddedToTheList()
+        public void WhenAddingPoints_ShouldThisPointsBeAddedToTheList()
         {
+            DayInMemory day = new DayInMemory();
+
             List<float> ratings = new List<float>();
             float numberToAdd1 = 5;
             float numberToAdd2 = 10;
@@ -27,18 +21,22 @@ namespace GradeYourDay.Tests
         [Test]
         public void WhenAddingPoints_ShouldReturnCorrectStatistics()
         {
-            day.AddRating(5);
-            day.AddRating(4);
+            Statistics statistics = new Statistics();
+            DayInMemory result = new DayInMemory();
 
-            var statistics = day.GetStatistics();
+            statistics.AddRating(5);
+            statistics.AddRating(4);
+            statistics.AddRating(2);
+            statistics.AddRating(1);
 
-            Assert.AreEqual(2, statistics.Count);
-            Assert.AreEqual(4.5, statistics.Average);
+            result.GetStatistics();
+
+            Assert.AreEqual(4, statistics.Count);
+            Assert.AreEqual(12, statistics.Sum);
+            Assert.AreEqual(3, statistics.Average);
             Assert.AreEqual(5, statistics.Max);
-            Assert.AreEqual(4, statistics.Min);
+            Assert.AreEqual(1, statistics.Min);
 
         }
-
     }
-
 }
