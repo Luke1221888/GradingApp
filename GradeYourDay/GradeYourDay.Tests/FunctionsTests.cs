@@ -5,7 +5,7 @@ namespace GradeYourDay.Tests
         [Test]
         public void WhenAddingPoints_ShouldThisPointsBeAddedToTheList()
         {
-            DayInMemory day = new DayInMemory();
+            DayInMemory day = new DayInMemory("monday");
 
             List<float> ratings = new List<float>();
             float numberToAdd1 = 5;
@@ -22,7 +22,7 @@ namespace GradeYourDay.Tests
         public void WhenAddingPoints_ShouldReturnCorrectStatistics()
         {
             Statistics statistics = new Statistics();
-            DayInMemory result = new DayInMemory();
+            DayInMemory result = new DayInMemory("monday");
 
             statistics.AddRating(5);
             statistics.AddRating(4);

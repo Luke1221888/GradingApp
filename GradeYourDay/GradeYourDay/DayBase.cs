@@ -2,42 +2,71 @@
 {
     public abstract class DayBase : IDay
     {
-
-        public List<string> questions = new List<string> {
-            "In what number range did you make the most of your time??",
-            "In what number range did you feel today?",
-            "In what number range did you have contacts with people today?",
-            "In what number range did you manage to complete tasks today?",
-            "In what number range did you think positively today?",
-            "In what number range did you care about entertainment?",
-            "In what number range did you save money?",
-            "In what number range did you care about physical activity?",
-            "In what number range did you care about tidyness in your house, workplace?",
-            "In what number range this day was unusual in compare to other days?"
-        };
-
         public event IDay.TextAddedToFile TextAdded;
 
         public string Day { get; set; }
 
-        protected DayBase(string day)
+        public DayBase(string day)
         {
-        }
-
-        public DayBase()
-        {
+            Day = day;
         }
 
         public abstract void AddRating(float rating);
 
         public abstract void AddRating(double rating);
 
-        public abstract void AddRating(string answer);
+        public void AddRating(string answer)
+        {
+            if (float.TryParse(answer, out float floatResult))
+            {
+                if (CheckAnswer(answer, out float rating))
+                {
+                    AddRating(rating);
+                }
+            }
+            else if (char.TryParse(answer, out char charResult))
+            {
+                if (CheckAnswer(answer, out float rating))
+                {
+                    AddRating(rating);
+                }
+            }
+            else
+            {
+                throw new Exception("String is not correct answer");
+            }
+        }
 
-        public abstract bool CheckAnswer(string answer, out float result);
+        public bool CheckAnswer(string answer, out float result)
+        {
+            if (float.TryParse(answer, out result))
+            {
+                if (result >= 0 || result <= 10)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public abstract void ShowRatings();
 
         public abstract Statistics GetStatistics();
 
-        public abstract void ShowQuestions();
+        public void ShowStatistics()
+        {
+            var statistics = GetStatistics();
+            Console.WriteLine($"Statistics for {Day}");
+            Console.WriteLine();
+            Console.Write("Ratings: \n");
+            ShowRatings();
+            Console.WriteLine();
+            Console.WriteLine($"Count of entered numbers:  {statistics.Count}");
+            Console.WriteLine($"Highest rating:            {statistics.Max}");
+            Console.WriteLine($"Lowest rating:             {statistics.Min}");
+            Console.WriteLine($"Average rating:            {statistics.Average:F2}");
+            Console.WriteLine($"Grade as letter is:        {statistics.AverageLetter}");
+            Console.WriteLine($"Sum of entered numbers:    {statistics.Sum}");
+        }
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GradeYourDay
+﻿namespace GradeYourDay
 {
     public interface IDay
     {
@@ -17,8 +11,6 @@ namespace GradeYourDay
         bool CheckAnswer(string answer, out float result);
 
         Statistics GetStatistics();
-
-        void ShowQuestions();
 
         delegate void TextAddedToFile(object sender, EventArgs args);
 

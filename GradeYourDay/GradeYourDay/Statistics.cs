@@ -3,16 +3,16 @@ namespace GradeYourDay
 {
     public class Statistics
     {
-        public float Min { get; private set; } 
+        public float Min { get; private set; }
 
-        public float Max { get; private set; } 
+        public float Max { get; private set; }
 
         public float Sum { get; private set; }
 
-        public float Count {  get; private set; }
+        public float Count { get; private set; }
 
-        public float Average { 
-
+        public float Average
+        {
             get
             {
                 return Sum / Count;
@@ -43,7 +43,6 @@ namespace GradeYourDay
                         WriteLine("Your day rating is very low. Try get better result tomorow.");
                         break;
                 }
-                WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
                 switch (Average)
                 {
@@ -60,16 +59,19 @@ namespace GradeYourDay
                 }
             }
         }
+
         public Statistics()
         {
             Min = float.MaxValue;
             Max = float.MinValue;
+            Count = 0;
+            Sum = 0;
         }
 
         public void AddRating(float rating)
         {
             Count++;
-            Sum += rating;  
+            Sum += rating;
             Min = Math.Min(rating, Min);
             Max = Math.Max(rating, Max);
         }

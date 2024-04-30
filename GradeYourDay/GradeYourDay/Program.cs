@@ -2,70 +2,200 @@
 
 namespace GradeYourDay
 {
-    class Program
+    class Program : Menu
     {
-        private static void Main(string[] args)
+        static void Main(string[] args)
         {
-            Title = "GradeYourDay";
-            WriteLine("Simply app for rating a day of patients");
-            WriteLine("***********************************************");
+            int desiredWidth = 190;
+            int desiredHeight = 40;
 
-            while (true)
+            WindowHeight = desiredHeight;
+            WindowWidth = desiredWidth;
+
+            string day;
+            string TextArt;
+            bool isClosed = false;
+            DayInFile dayInFile;
+            DayInMemory dayInMemory;
+
+            while (!isClosed)
             {
-                WriteLine("Type on keyboard '1' to add ratings of your day into file and read statistics");
-                WriteLine("Type on keyboard '2' to check your  day statistics in program memory");
-                WriteLine("Type on keyboard 'Q' to quit program");
-                WriteLine("What will you do?");
+                TextArt = Menu.welcome;
+                WriteLine(TextArt);
+                DisplayMenu();
 
-                string input = ReadLine();
-                if (input == "1")
-                {
-                    string day = ReadData("Enter day:");
-                    if (!string.IsNullOrEmpty(day))
-                    {
-                        var dayInFile = new DayInFile(day);
-                        WriteLine("\nType number from 0 to 10 to answer questions.");
-                        WriteLine("Or type 'exit' to end program\n");
-                        WriteLine("0 means worst result");
-                        WriteLine("10 means best result");
-                        WriteLine("***********************************************");
+                var userChoice = "";
 
-                        dayInFile.TextAdded += DayTextAdded;
-                        dayInFile.ShowQuestions();
-                        dayInFile.GetStatistics();
-                    }
-                    else
-                    {
-                        WriteLine("Day can not be empty!");
-                    }
-                }
-                else if (input == "2")
+                if (string.IsNullOrEmpty(userChoice))
                 {
-                    string day = ReadData("Enter day:");
-                    var dayInMemory = new DayInMemory(day);
-                    dayInMemory.ShowQuestions();
-                    break;
+                    userChoice = ReadLine().ToUpper();
                 }
-                else if (input == "q".ToLower().Trim())
+
+                switch (userChoice)
                 {
-                    break;
-                }
-                else
-                {
-                    WriteLine("You chose none of options.");
+                    case "1":
+                        day = ReadData("Enter day:");
+                        if (!string.IsNullOrEmpty(day))
+                        {
+                            dayInFile = new DayInFile(day);
+                            dayInFile.SaveDayToList();
+                            dayInFile.TextAdded += DayTextAdded;
+
+                            DisplayInfo();
+                            ShowQuestionsInChoiceOne(dayInFile);
+                        }
+                        else
+                        {
+                            WriteLine("Day can not be empty!");
+                        }
+                        break;
+
+
+                    case "2":
+                        day = ReadData("Enter day:");
+                        if (!string.IsNullOrEmpty(day))
+                        {
+                            dayInMemory = new DayInMemory(day);
+                            DisplayInfo();
+                            ShowQuestionsInChoiceTwo(dayInMemory);
+                            dayInMemory.ShowStatistics();
+                        }
+                        else
+                        {
+                            WriteLine("Day can not be empty!");
+                        }
+                        WriteLine("\nThank you for rating your day.\n");
+                        break;
+
+
+                    case "3":
+                        WriteLine("We read data from text file:");
+                        WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                        if (DayInFile.GetDayList())
+                        {
+                            day = ReadData("Please enter proper day");
+                            var dayInFile3 = new DayInFile(day);
+
+                            try
+                            {
+                                dayInFile3.ShowStatistics();
+                            }
+                            catch (Exception e)
+                            {
+                                WriteLine($"Exception catched ! {e.Message}");
+                            }
+
+                        }
+                        else
+                        {
+                            WriteLine($"You must enter correct word or enter q to exit");
+                        }
+                        break;
+
+
+                    case "Q":
+                        WriteLine("Press any key to exit");
+                        ReadKey();
+                        isClosed = true;
+                        break;
+
+
+                    default:
+                        WriteLine("You chose none of allowed options.");
+                        userChoice = "";
+                        continue;
                 }
             }
+        }
 
-            static string ReadData(string comment)
+        static string ReadData(string comment)
+        {
+            WriteLine(comment);
+            string userInput = ReadLine();
+            return userInput;
+        }
+
+        static void DayTextAdded(object sender, EventArgs args)
+        {
+            WriteLine("Text was added to file!");
+        }
+
+        static void ShowQuestionsInChoiceOne(DayInFile dayInFile, int questionIndex = 0)
+        {
+            if (questionIndex >= dayInFile.questions.Count)
             {
-                WriteLine(comment);
-                string userInput = ReadLine();
-                return userInput;
+                return;
             }
 
-            static void DayTextAdded(object sender, EventArgs args)
+            WriteLine("--------------------------------------------------------------------------");
+            WriteLine(dayInFile.questions[questionIndex]);
+            WriteLine("--------------------------------------------------------------------------");
+
+            string userInput = ReadLine();
+
+            if (userInput == "exit")
             {
-                Console.WriteLine("Text was added to file!");
+                return;
+            }
+
+            try
+            {
+                dayInFile.AddRating(userInput);
+
+                ShowQuestionsInChoiceOne(dayInFile, questionIndex + 1);
+                questionIndex++;
+            }
+            catch (Exception error)
+            {
+                WriteLine($"Exception catched: {error.Message}");
+
+                ShowQuestionsInChoiceOne(dayInFile, questionIndex++);
+            }
+        }
+
+        static void ShowQuestionsInChoiceTwo(DayInMemory dayInMemory, int questionIndex = 0)
+        {
+            if (questionIndex >= dayInMemory.questions.Count)
+            {
+                PrintLowestRatingQuestions(dayInMemory);
+                return;
+            }
+
+            WriteLine("--------------------------------------------------------------------------");
+            WriteLine(dayInMemory.questions[questionIndex]);
+            WriteLine("--------------------------------------------------------------------------");
+
+            string userInput = ReadLine();
+
+            if (userInput == "exit")
+            {
+                return;
+            }
+
+            try
+            {
+                dayInMemory.AddRating(userInput);
+                ShowQuestionsInChoiceTwo(dayInMemory, questionIndex + 1);
+            }
+            catch (Exception error)
+            {
+                WriteLine($"Exception catched: {error.Message}");
+                ShowQuestionsInChoiceTwo(dayInMemory, questionIndex);
+            }
+        }
+
+        static void PrintLowestRatingQuestions(DayInMemory dayInMemory)
+        {
+            var minRating = DayInMemory.ratings.Min();
+
+            WriteLine("Try work a bit with following topics with lowest ratings:\n");
+
+            for (int i = 0; i < dayInMemory.questions.Count; i++)
+            {
+                if (DayInMemory.ratings[i] < 5)
+                {
+                    WriteLine($"- {dayInMemory.questions[i]}: rating {DayInMemory.ratings[i]}\n");
+                }
             }
         }
     }

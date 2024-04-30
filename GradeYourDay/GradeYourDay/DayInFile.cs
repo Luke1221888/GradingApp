@@ -5,11 +5,11 @@ namespace GradeYourDay
     public class DayInFile : DayBase
     {
         public List<string> questions = new List<string> {
-            "In what number range did you make the most of your time??",
-            "In what number range did you feel today?",
-            "In what number range did you have contacts with people today?",
-            "In what number range did you manage to complete tasks today?",
-            "In what number range did you think positively today?",
+            "In what number range did you make the most of your time?",
+            "In what number range did you feel?",
+            "In what number range did you have contacts with people?",
+            "In what number range did you manage to complete tasks?",
+            "In what number range did you think positively?",
             "In what number range did you care about entertainment?",
             "In what number range did you save money?",
             "In what number range did you care about physical activity?",
@@ -17,37 +17,26 @@ namespace GradeYourDay
             "In what number range this day was unusual in compare to other days?"
         };
 
-        private string FileName = "_ratings.txt";
-
+        private const string fileName = "ratings.txt";
+        private string fullFileName;
+        private const string DayList = "Day_list.txt";
         public string Day { get; set; }
 
         public delegate void TextAddedToFile(object sender, EventArgs args);
 
         public event TextAddedToFile TextAdded;
 
-
         public DayInFile(string day) : base(day)
         {
             Day = day;
+            fullFileName = $"{day}_{fileName}";
         }
 
         public override void AddRating(double rating)
         {
             if (rating >= 0 && rating <= 10)
             {
-                AddRating(rating);
-            }
-            else
-            {
-                WriteLine("Rating must be between 0 and 10.");
-            }
-        }
-
-        public override void AddRating(float rating)
-        {
-            if (rating >= 0 && rating <= 10)
-            {
-                using (var writer = File.AppendText(FileName))
+                using (var writer = File.AppendText(fullFileName))
                 {
                     writer.WriteLine(rating);
                     if (TextAdded != null)
@@ -56,27 +45,60 @@ namespace GradeYourDay
                     }
                 }
             }
+            else
+            {
+                throw new Exception("Number can't be add to file because its over range");
+            }
         }
 
-        public override void AddRating(string answer)
+        public override void AddRating(float rating)
         {
-
-            if (CheckAnswer(answer, out float rating))
+            if (rating >= 0 && rating <= 10)
             {
-                AddRating(rating);
+                using (var writer = File.AppendText(fullFileName))
+                {
+                    writer.WriteLine(rating);
+                    if (TextAdded != null)
+                    {
+                        TextAdded(this, new EventArgs());
+                    }
+                }
             }
             else
             {
-                WriteLine("String is not correct answer");
+                throw new Exception("Number can't be add to file because its over range");
+            }
+
+        }
+
+        public void AddRating(string answer)
+        {
+            if (float.TryParse(answer, out float floatResult))
+            {
+                if (CheckAnswer(answer, out float rating))
+                {
+                    AddRating(rating);
+                }
+            }
+            else if (char.TryParse(answer, out char charResult))
+            {
+                if (CheckAnswer(answer, out float rating))
+                {
+                    AddRating(rating);
+                }
+            }
+            else
+            {
+                throw new Exception("String is not correct answer");
             }
         }
 
-        public override bool CheckAnswer(string answer, out float result)
+        public bool CheckAnswer(string answer, out float result)
         {
 
             if (float.TryParse(answer, out result))
             {
-                if (result >= 0 && result <= 10)
+                if (result >= 0 || result <= 10)
                 {
                     return true;
                 }
@@ -87,117 +109,112 @@ namespace GradeYourDay
         public override Statistics GetStatistics()
         {
             var statistics = new Statistics();
-            CountStatistics();
-            ReadFromFile();
 
+            if (File.Exists(fullFileName))
+            {
+                using (var reader = File.OpenText(fullFileName))
+                {
+                    var line = reader.ReadLine();
+                    while (line is not null)
+                    {
+                        var number = float.Parse(line);
+                        statistics.AddRating(number);
+                        line = reader.ReadLine();
+                    }
+                }
+            }
             return statistics;
         }
 
-        public void CountStatistics()
+        public override void ShowRatings()
         {
-            if (File.Exists(FileName))
+            if (File.Exists(fullFileName))
             {
-                using (StreamReader reader = new StreamReader(FileName))
+                using (var reader = File.OpenText(fullFileName))
                 {
-                    string line;
-                    float sum = 0;
-                    int count = 0;
-                    float min = float.MaxValue;
-                    float max = float.MinValue;
-
-                    while ((line = reader.ReadLine()) != null)
+                    var line = reader.ReadLine();
+                    while (line is not null)
                     {
-                        if (float.TryParse(line, out float value))
-                        {
-                            sum += value;
-
-                            if (value < min)
-                                min = value;
-
-                            if (value > max)
-                                max = value;
-                            count++;
-                        }
-                        else
-                        {
-                            WriteLine($"Line parse error: {line}");
-                        }
+                        WriteLine($"{line}");
+                        line = reader.ReadLine();
                     }
-
-                    float average = count > 0 ? sum / count : 0;
-
-                    WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                    WriteLine($"Statistics for {Day}:");
-                    WriteLine($"Average grade counted from text file : {average}");
-                    WriteLine($"Minimal grade from text file: {min}");
-                    WriteLine($"Maximal grade from text file: {max}");
-                    WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 }
             }
             else
             {
-                WriteLine("File with ratings doesn't exist");
+                throw new Exception($"Not avalaible");
             }
         }
 
-        public void ReadFromFile()
+        public void SaveDayToList()
         {
-            WriteLine();
-            WriteLine("We read data from text file:");
-            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            bool isExist = false;
+            string dayInFile = $"{Day.ToLower()}_{fileName.ToLower()}";
 
-            using (StreamReader reader = new StreamReader("_ratings.txt"))
+            if (File.Exists(DayList))
             {
-                string line;
-
-                while ((line = reader.ReadLine()) != null)
+                using (var reader = File.OpenText(DayList))
                 {
-                    WriteLine(line);
+                    var line = reader.ReadLine();
+                    while (line is not null)
+                    {
+                        if (line == dayInFile)
+                        {
+                            isExist = true;
+                            break;
+                        }
+                        line = reader.ReadLine();
+                    }
                 }
             }
-            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            if (!isExist || !File.Exists(DayList))
+            {
+                using (var writer = File.AppendText(DayList))
+                {
+                    writer.WriteLine(dayInFile);
+                }
+            }
         }
-        public override void ShowQuestions()
+
+        public static bool GetDayList()
         {
-            int questionIndex = 0;
-
-            while (questionIndex < questions.Count)
+            if (File.Exists(DayList))
             {
-                try
+                using (var reader = File.OpenText(DayList))
                 {
-                    WriteLine("------------------------------------------------------------------------");
-                    WriteLine(questions[questionIndex]);
-                    WriteLine("------------------------------------------------------------------------");
+                    var line = reader.ReadLine();
+                    int found = 0;
 
-                    string getNumbers = ReadLine();
+                    string lineDay;
+                    List<string> listOfDay = new();
 
-
-                    if (getNumbers.ToLower().Trim() == "exit")
+                    while (line is not null)
                     {
-                        break;
-                    }
-                    if (CheckAnswer(getNumbers, out float rating))
-                    {
-                        AddRating(getNumbers);
-                        questionIndex++;
-                    }
-                    else
-                    {
-                        WriteLine("Answer is wrong. Try again.");
+                        found = line.IndexOf('_');
+                        lineDay = line.Substring(0, found);
+                        lineDay = $"{char.ToUpper(lineDay[0])}{lineDay.Substring(1, lineDay.Length - 1)}";
+                        listOfDay.Add($"{lineDay}");
+                        line = reader.ReadLine();
                     }
 
+                    listOfDay.Sort();
+                    int n = 1;
+                    foreach (var day in listOfDay)
+                    {
+                        WriteLine($"{n}. {day}");
+                        n++;
+                    }
+                    WriteLine();
                 }
-                catch (Exception)
-                {
-                    WriteLine("This should not have happen");
-                }
+                return true;
             }
-
-            Clear();
-            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            WriteLine("");
-            WriteLine("\nThank you for rating your day.\n");
+            else
+            {
+                WriteLine("No day has been saved yet.\n");
+                return false;
+            }
         }
     }
 }
+
+
