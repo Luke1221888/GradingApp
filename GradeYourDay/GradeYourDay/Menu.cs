@@ -6,7 +6,6 @@ namespace GradeYourDay
 {
     public class Menu
     {
-
         public static string welcome = @"                                                                                                                                                                  
         
                                                                                                                                                                              _.--,-```-.    
@@ -44,11 +43,12 @@ namespace GradeYourDay
 
         protected static void DisplayInfo()
         {
-            WriteLine("\nType number from 0 to 10 to answer questions.");
-            WriteLine("Or type 'exit' to end program\n");
-            WriteLine("0 means worst result");
-            WriteLine("10 means best result");
-            WriteLine("*********************************************************");
+            WriteLine("\n********************************************************");
+            WriteLine("Type number from 0 to 10 to answer questions");
+            WriteLine("Or type 'exit' to quit to main menu\n");
+            WriteLine("0 means worst rating");
+            WriteLine("10 means best rating");
+            WriteLine("********************************************************\n");
         }
     }
 }

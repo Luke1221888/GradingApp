@@ -33,13 +33,14 @@ namespace GradeYourDay
 
                 switch (userChoice)
                 {
+
                     case "1":
                         day = ReadData("Enter day:");
                         if (!string.IsNullOrEmpty(day))
                         {
                             dayInFile = new DayInFile(day);
                             dayInFile.SaveDayToList();
-                            dayInFile.TextAdded += DayTextAdded;
+                            dayInFile.RatingAdded += DayRatingAdded;
 
                             DisplayInfo();
                             ShowQuestionsInChoiceOne(dayInFile);
@@ -56,6 +57,8 @@ namespace GradeYourDay
                         if (!string.IsNullOrEmpty(day))
                         {
                             dayInMemory = new DayInMemory(day);
+                            dayInMemory.RatingAdded += DayRatingAdded;
+
                             DisplayInfo();
                             ShowQuestionsInChoiceTwo(dayInMemory);
                             dayInMemory.ShowStatistics();
@@ -84,7 +87,6 @@ namespace GradeYourDay
                             {
                                 WriteLine($"Exception catched ! {e.Message}");
                             }
-
                         }
                         else
                         {
@@ -115,9 +117,9 @@ namespace GradeYourDay
             return userInput;
         }
 
-        static void DayTextAdded(object sender, EventArgs args)
+        static void DayRatingAdded(object sender, EventArgs args)
         {
-            WriteLine("Text was added to file!");
+            WriteLine("Rating is added!");
         }
 
         static void ShowQuestionsInChoiceOne(DayInFile dayInFile, int questionIndex = 0)
@@ -188,7 +190,7 @@ namespace GradeYourDay
         {
             var minRating = DayInMemory.ratings.Min();
 
-            WriteLine("Try work a bit with following topics with lowest ratings:\n");
+            WriteLine("\nTry work a bit with following topics with lowest ratings:\n");
 
             for (int i = 0; i < dayInMemory.questions.Count; i++)
             {

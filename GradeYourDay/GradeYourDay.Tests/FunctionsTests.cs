@@ -16,7 +16,6 @@ namespace GradeYourDay.Tests
 
             Assert.AreEqual(2, DayInMemory.ratings.Count);
             Assert.AreEqual(numberToAdd1, DayInMemory.ratings[0]);
-
         }
         [Test]
         public void WhenAddingPoints_ShouldReturnCorrectStatistics()
@@ -36,7 +35,6 @@ namespace GradeYourDay.Tests
             Assert.AreEqual(3, statistics.Average);
             Assert.AreEqual(5, statistics.Max);
             Assert.AreEqual(1, statistics.Min);
-
         }
     }
 }

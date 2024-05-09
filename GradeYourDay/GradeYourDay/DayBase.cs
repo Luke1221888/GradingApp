@@ -1,8 +1,24 @@
-﻿namespace GradeYourDay
+﻿using System;
+namespace GradeYourDay
 {
     public abstract class DayBase : IDay
     {
-        public event IDay.TextAddedToFile TextAdded;
+        public List<string> questions = new List<string> {
+            "In what number range did you make the most of your time?",
+            "In what number range did you feel?",
+            "In what number range did you have contacts with people?",
+            "In what number range did you manage to complete tasks?",
+            "In what number range did you think positively?",
+            "In what number range did you care about entertainment?",
+            "In what number range did you save money?",
+            "In what number range did you care about physical activity?",
+            "In what number range did you care about tidyness in your house, workplace?",
+            "In what number range this day was unusual in compare to other days?"
+        };
+
+        public delegate void RatingAddedDelegate(object sender, EventArgs args);
+
+        public abstract event RatingAddedDelegate RatingAdded;
 
         public string Day { get; set; }
 
@@ -58,7 +74,7 @@
             var statistics = GetStatistics();
             Console.WriteLine($"Statistics for {Day}");
             Console.WriteLine();
-            Console.Write("Ratings: \n");
+            Console.Write("Ratings : \n");
             ShowRatings();
             Console.WriteLine();
             Console.WriteLine($"Count of entered numbers:  {statistics.Count}");

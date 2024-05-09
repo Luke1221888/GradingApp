@@ -4,27 +4,11 @@ namespace GradeYourDay
 {
     public class DayInFile : DayBase
     {
-        public List<string> questions = new List<string> {
-            "In what number range did you make the most of your time?",
-            "In what number range did you feel?",
-            "In what number range did you have contacts with people?",
-            "In what number range did you manage to complete tasks?",
-            "In what number range did you think positively?",
-            "In what number range did you care about entertainment?",
-            "In what number range did you save money?",
-            "In what number range did you care about physical activity?",
-            "In what number range did you care about tidyness in your house, workplace?",
-            "In what number range this day was unusual in compare to other days?"
-        };
-
         private const string fileName = "ratings.txt";
         private string fullFileName;
         private const string DayList = "Day_list.txt";
-        public string Day { get; set; }
 
-        public delegate void TextAddedToFile(object sender, EventArgs args);
-
-        public event TextAddedToFile TextAdded;
+        public override event RatingAddedDelegate RatingAdded;
 
         public DayInFile(string day) : base(day)
         {
@@ -39,71 +23,35 @@ namespace GradeYourDay
                 using (var writer = File.AppendText(fullFileName))
                 {
                     writer.WriteLine(rating);
-                    if (TextAdded != null)
+                    if (RatingAdded != null)
                     {
-                        TextAdded(this, new EventArgs());
+                        RatingAdded(this, new EventArgs());
                     }
                 }
             }
             else
             {
-                throw new Exception("Number can't be add to file because its over range");
+                throw new Exception("Number can't be added to file because its over range");
             }
         }
 
         public override void AddRating(float rating)
         {
-            if (rating >= 0 && rating <= 10)
+            if (rating >= 0.0 && rating <= 10.0)
             {
                 using (var writer = File.AppendText(fullFileName))
                 {
                     writer.WriteLine(rating);
-                    if (TextAdded != null)
+                    if (RatingAdded != null)
                     {
-                        TextAdded(this, new EventArgs());
+                        RatingAdded(this, new EventArgs());
                     }
                 }
             }
             else
             {
-                throw new Exception("Number can't be add to file because its over range");
+                throw new Exception("Number can't be added to file because its over range");
             }
-
-        }
-
-        public void AddRating(string answer)
-        {
-            if (float.TryParse(answer, out float floatResult))
-            {
-                if (CheckAnswer(answer, out float rating))
-                {
-                    AddRating(rating);
-                }
-            }
-            else if (char.TryParse(answer, out char charResult))
-            {
-                if (CheckAnswer(answer, out float rating))
-                {
-                    AddRating(rating);
-                }
-            }
-            else
-            {
-                throw new Exception("String is not correct answer");
-            }
-        }
-
-        public bool CheckAnswer(string answer, out float result)
-        {
-
-            if (float.TryParse(answer, out result))
-            {
-                if (result >= 0 || result <= 10)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public override Statistics GetStatistics()
@@ -204,7 +152,6 @@ namespace GradeYourDay
                         WriteLine($"{n}. {day}");
                         n++;
                     }
-                    WriteLine();
                 }
                 return true;
             }
