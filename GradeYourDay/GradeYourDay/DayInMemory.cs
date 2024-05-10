@@ -17,7 +17,7 @@ namespace GradeYourDay
 
         public override void AddRating(float rating)
         {
-            if (rating >= 0.0 && rating <= 10.0)
+            if (rating >= 0 && rating <= 10)
             {
                 ratings.Add(rating);
 
@@ -41,18 +41,6 @@ namespace GradeYourDay
                 statistics.AddRating(rating);
             }
             return statistics;
-        }
-
-        public override void AddRating(double rating)
-        {
-            if (rating >= 0.0 && rating <= 10.0)
-            {
-                AddRating(rating);
-            }
-            else
-            {
-                throw new Exception("Numbers between 0 and 10 are allowed");
-            }
         }
 
         public override void ShowRatings()

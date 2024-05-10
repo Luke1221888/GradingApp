@@ -16,28 +16,9 @@ namespace GradeYourDay
             fullFileName = $"{day}_{fileName}";
         }
 
-        public override void AddRating(double rating)
-        {
-            if (rating >= 0 && rating <= 10)
-            {
-                using (var writer = File.AppendText(fullFileName))
-                {
-                    writer.WriteLine(rating);
-                    if (RatingAdded != null)
-                    {
-                        RatingAdded(this, new EventArgs());
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception("Number can't be added to file because its over range");
-            }
-        }
-
         public override void AddRating(float rating)
         {
-            if (rating >= 0.0 && rating <= 10.0)
+            if (rating >= 0 && rating <= 10)
             {
                 using (var writer = File.AppendText(fullFileName))
                 {

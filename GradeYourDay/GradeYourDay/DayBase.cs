@@ -29,8 +29,6 @@ namespace GradeYourDay
 
         public abstract void AddRating(float rating);
 
-        public abstract void AddRating(double rating);
-
         public void AddRating(string answer)
         {
             if (float.TryParse(answer, out float floatResult))
@@ -40,12 +38,9 @@ namespace GradeYourDay
                     AddRating(rating);
                 }
             }
-            else if (char.TryParse(answer, out char charResult))
+            else if (char.TryParse(answer, out char rating))
             {
-                if (CheckAnswer(answer, out float rating))
-                {
                     AddRating(rating);
-                }
             }
             else
             {
@@ -57,7 +52,7 @@ namespace GradeYourDay
         {
             if (float.TryParse(answer, out result))
             {
-                if (result >= 0 || result <= 10)
+                if (result >= 0 && result <= 10)
                 {
                     return true;
                 }
